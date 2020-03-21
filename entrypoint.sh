@@ -49,8 +49,6 @@ git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
-git clone github.com/CumulusNetworks/docs
-cd docs
 git checkout $TARGET_BRANCH
 
 git fetch
