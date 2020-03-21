@@ -54,7 +54,7 @@ git checkout $TARGET_BRANCH
 git fetch
 
 # Do the merge
-git merge origin/$SOURCE_BRANCH
+git merge origin/${SOURCE_BRANCH}
 
 # Push the branch
 git push
