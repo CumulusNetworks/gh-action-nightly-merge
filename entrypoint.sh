@@ -4,8 +4,8 @@ set -e
 
 echo
 echo "  'Nightly Merge Action' is using the following input:"
-echo "    - source_branch = '$SOURCE_BRANCH'"
-echo "    - target_branch = '$TARGET_BRANCH'"
+echo "    - source_branch = '$INPUT_SOURCE_BRANCH'"
+echo "    - target_branch = '$INPUT_TARGET_BRANCH'"
 echo "    - allow_ff = $INPUT_ALLOW_FF"
 echo "    - allow_git_lfs = $INPUT_GIT_LFS"
 echo "    - ff_only = $INPUT_FF_ONLY"
@@ -49,12 +49,12 @@ git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
-git checkout $TARGET_BRANCH
+git checkout $INPUT_TARGET_BRANCH
 
 git fetch
 
 # Do the merge
-git merge origin/$SOURCE_BRANCH
+git merge origin/$INPUT_SOURCE_BRANCH
 
 # Push the branch
 git push
