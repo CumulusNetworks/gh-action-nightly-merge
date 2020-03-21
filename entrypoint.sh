@@ -4,8 +4,8 @@ set -e
 
 echo
 echo "  'Nightly Merge Action' is using the following input:"
-echo "    - stable_branch = '$INPUT_STABLE_BRANCH'"
-echo "    - development_branch = '$INPUT_DEVELOPMENT_BRANCH'"
+echo "    - source_branch = '$SOURCE_BRANCH'"
+echo "    - target_branch = '$TARGET_BRANCH'"
 echo "    - allow_ff = $INPUT_ALLOW_FF"
 echo "    - allow_git_lfs = $INPUT_GIT_LFS"
 echo "    - ff_only = $INPUT_FF_ONLY"
@@ -49,31 +49,14 @@ git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
-git fetch origin $INPUT_STABLE_BRANCH
-git checkout -b $INPUT_STABLE_BRANCH origin/$INPUT_STABLE_BRANCH
+git clone github.com/CumulusNetworks/docs
+cd docs
+git checkout $TARGET_BRANCH
 
-git fetch origin $INPUT_DEVELOPMENT_BRANCH
-git checkout -b $INPUT_DEVELOPMENT_BRANCH origin/$INPUT_DEVELOPMENT_BRANCH
-
-if git merge-base --is-ancestor $INPUT_STABLE_BRANCH $INPUT_DEVELOPMENT_BRANCH; then
-  echo "No merge is necessary"
-  exit 0
-fi;
-
-set +o xtrace
-echo
-echo "  'Nightly Merge Action' is trying to merge the '$INPUT_STABLE_BRANCH' branch ($(git log -1 --pretty=%H $INPUT_STABLE_BRANCH))"
-echo "  into the '$INPUT_DEVELOPMENT_BRANCH' branch ($(git log -1 --pretty=%H $INPUT_DEVELOPMENT_BRANCH))"
-echo
-set -o xtrace
+git fetch
 
 # Do the merge
-git merge $FF_MODE --no-edit $INPUT_STABLE_BRANCH
-
-# Pull lfs if enabled
-if $INPUT_GIT_LFS; then
-  git lfs pull
-fi
+git merge origin/$SOURCE_BRANCH
 
 # Push the branch
-git push origin $INPUT_DEVELOPMENT_BRANCH
+git push
