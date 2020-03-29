@@ -43,15 +43,14 @@ if ! $INPUT_ALLOW_FORKS; then
   fi
 fi
 
-git remote set-url origin https://x-access-token:${!INPUT_PUSH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
+git clone https://x-access-token:${!INPUT_PUSH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
+cd docs
 git config --global user.name "$INPUT_USER_NAME"
 git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
 git checkout $INPUT_TARGET_BRANCH
-
-git fetch
 
 # Do the merge
 git merge origin/$INPUT_SOURCE_BRANCH
