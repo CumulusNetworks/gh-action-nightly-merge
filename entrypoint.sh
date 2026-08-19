@@ -12,7 +12,7 @@ echo "    - ff_only = $INPUT_FF_ONLY"
 echo "    - allow_forks = $INPUT_ALLOW_FORKS"
 echo "    - user_name = $INPUT_USER_NAME"
 echo "    - user_email = $INPUT_USER_EMAIL"
-echo "    - push_token = $INPUT_PUSH_TOKEN = ${!INPUT_PUSH_TOKEN}"
+echo "    - push_token = $INPUT_PUSH_TOKEN = [REDACTED]"
 echo
 
 if [[ -z "${!INPUT_PUSH_TOKEN}" ]]; then
@@ -21,14 +21,14 @@ if [[ -z "${!INPUT_PUSH_TOKEN}" ]]; then
 fi
 
 FF_MODE="--no-ff"
-if $INPUT_ALLOW_FF; then
+if [[ "$INPUT_ALLOW_FF" == "true" ]]; then
   FF_MODE="--ff"
-  if $INPUT_FF_ONLY; then
+  if [[ "$INPUT_FF_ONLY" == "true" ]]; then
     FF_MODE="--ff-only"
   fi
 fi
 
-if ! $INPUT_ALLOW_FORKS; then
+if [[ "$INPUT_ALLOW_FORKS" != "true" ]]; then
   if [[ -z "$GITHUB_TOKEN" ]]; then
     echo "Set the GITHUB_TOKEN env variable."
     exit 1
