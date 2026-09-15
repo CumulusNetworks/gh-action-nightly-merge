@@ -43,17 +43,30 @@ if [[ "$INPUT_ALLOW_FORKS" != "true" ]]; then
   fi
 fi
 
-git clone https://x-access-token:${!INPUT_PUSH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
+# Set up a credential helper so the token never appears on a command line,
+# in .git/config, or in xtrace/error output.
+export PUSH_TOKEN="${!INPUT_PUSH_TOKEN}"
+GIT_ASKPASS_SCRIPT="$(mktemp)"
+trap 'rm -f "$GIT_ASKPASS_SCRIPT"' EXIT
+cat > "$GIT_ASKPASS_SCRIPT" << 'EOF'
+#!/bin/sh
+echo "$PUSH_TOKEN"
+EOF
+chmod +x "$GIT_ASKPASS_SCRIPT"
+export GIT_ASKPASS="$GIT_ASKPASS_SCRIPT"
+export GIT_TERMINAL_PROMPT=0
+
+git clone "https://x-access-token@github.com/$GITHUB_REPOSITORY.git"
 cd docs
 git config --global user.name "$INPUT_USER_NAME"
 git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
-git checkout $INPUT_TARGET_BRANCH
+git checkout "$INPUT_TARGET_BRANCH" --
 
 # Do the merge
-git merge origin/$INPUT_SOURCE_BRANCH
+git merge -- "origin/$INPUT_SOURCE_BRANCH"
 
 # Push the branch
 git push
